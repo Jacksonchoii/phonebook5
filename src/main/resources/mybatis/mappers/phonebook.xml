@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="phonebook">
+
+
+	<!-- PersonVo Map -->
+	<resultMap id="resultMapPersonVo" type="com.javaex.vo.PersonVo">
+		<result column="person_id" property="personId" />
+		<result column="name" property="name" />
+		<result column="hp" property="hp" />
+		<result column="company" property="company" />
+	</resultMap>
+
+
+	<!-- person_id값이 0으로 나오는 것은 Vo에서 setPerson_id 값을 가져와야하는데 personId로 되어있기 때문에 vo와 쿼리에서 확인하고 맞춰줘야한다 resultMap을 거쳐가며 알아서 바꿔준다 -->
+	<!-- 전체 리스트 가져오기 resultMap  아래 resultMap을 resultType으로 쓰지 않기 --> 	
+	<select id="selectList2" resultMap="resultMapPersonVo"> 
+		<![CDATA[
+			select  person_id,      
+	        		name,
+	        		hp,
+	        		company
+			from person
+			order by person_id desc
+		]]>
+	</select>
+
+
+	<!-- 전체 리스트 가져오기 -->
+	<!-- 쿼리문에 ; 마침표 들어가서는 안된다 빼야함 -->
+	<!-- person_id값이 0으로 나오는 것은 Vo에서 setPerson-id 값을 가져와야하는데 personId로 되어있기 때문에 vo와 쿼리에서 확인하고 맞춰줘야한다 -->
+	<select id="selectList" resultType="com.javaex.vo.PersonVo"> <!-- ctrl 눌러서 링크가 걸리면 잘 된것 꼭 확인해보기 // 실제 결과는 list지만 Vo로 알아서 다 해줌 -->
+		<![CDATA[
+			select  person_id personId,      
+	        		name,
+	        		hp,
+	        		company
+			from person
+			order by person_id desc
+		]]>
+	</select>
+
+
+	<!-- 전화번호저장 -->
+	<!-- 파라미터 바인딩 #{} 각 컬럼에 넣을 데이터값(파라미터에서 받아오는 값)=정의해준 이름(아무거나써도 되는데 이왕이면 의미를 알게 통일하자)으로 해당 위치에 맞춘다 get , set이 있어야한다 -->
+	<!-- parameterType=" " 따라가보면 "com.javaex.vo.PersonVo" 이런애가 있다 // *이름쓰는것 아님 -> 자료형으로 써줘야하는 부분 -->
+	<insert id="insert" parameterType="com.javaex.vo.PersonVo">
+		<![CDATA[
+			insert into	person
+			values (seq_person_id.nextval,
+	     			#{name},
+	        		#{hp},
+	        		#{company})
+		]]>
+	</insert>
+
+	<!-- 전화번호삭제 -->
+	<!-- 파라미터가 하나일 때 바인딩 #{} 아무이름이나 적어도 parameterType="int" 라서 int임 하지만 되도록 원래 의미를 알 수 있도록 이름을 붙일 것-->
+	<delete id="delete" parameterType="int">
+		<![CDATA[
+			delete from person
+			where person_id = #{personId}
+		]]>
+	</delete>
+
+	<!-- 전화번호 1개 가져오기 -->
+	<select id="selectOne" parameterType="int" resultType="com.javaex.vo.PersonVo">
+		<![CDATA[
+			select  person_id personId,
+	        		name,
+	        		hp,
+	        		company
+			from person
+			where person_id = #{personId}
+		]]>
+	</select>
+
+
+	<!-- 전화번호 수정 -->
+	<update id="update" parameterType="com.javaex.vo.PersonVo">
+		<![CDATA[
+			update person
+			set name = #{name},
+     			hp = #{hp},
+     			company = #{company}
+			where person_id = #{personId}
+		]]>
+	</update>
+
+
+</mapper>
