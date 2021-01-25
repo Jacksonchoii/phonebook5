@@ -1,6 +1,8 @@
 package com.javaex.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +56,48 @@ public class PhoneDao {
 		return personVo;
 	}
 	
-	
-	//전화번호 수정
-	public void personUpdate(PersonVo personVo) {
-		System.out.println("dao: personUpdate()");
+	//사람 1명 데이터 가져오기 2 -- Map으로 받기
+	public Map<String, Object> getPerson2(int personId) {
+		System.out.println("dao: getPerson2()" + personId);
 		
-		sqlSession.update("phonebook.update", personVo);
+		Map<String, Object> personMap = sqlSession.selectOne("phonebook.selectOne2", personId);
+		System.out.println(personMap.toString());
+		
+		/*
+		String name = (String)personMap.get("name");
+		System.out.println(name);
+		
+		int id = Integer.parseInt(String.valueOf(personMap.get("personId")));
+		System.out.println(id);
+		*/
+		
+		return personMap;
 	}
 	
+	//전화번호 수정
+	public int personUpdate(PersonVo personVo) {
+		System.out.println("dao: personUpdate()");
+		
+		int count = sqlSession.update("phonebook.update", personVo);
+		System.out.println("dao: personUpdate()" + count);
+		return count;
+	}
+	
+	//수정2 Map을 어떻게, 언제 쓸 것인가에 대해 생각해보기
+	public int personUpdate2(int personId, String name, String hp, String company) {
+		System.out.println("dao: personUpdate()"+ personId +", " + hp +", " + company);
+		
+		//vo대신 --> map 이용
+		//vo --> PersonVo personVo = new PersonVo(personId, name, hp, company);
+		Map<String, Object> personMap = new HashMap<String, Object>(); //Map만 만든거고 //tag달 이름, 실제로 들어올 데이터 -->(String뿐만 아니라 여러가지 데이터가 들어와야해서 Object)
+		personMap.put("id", personId); //("" key=이름 항상 String이어야함)
+		personMap.put("name", name);
+		personMap.put("hp", hp);
+		personMap.put("company", company);
+		
+		System.out.println(personMap.toString());
+		
+		return sqlSession.update("phonebook.update2", personMap); //굳이 변수 만들지 않고 어차피 count값이기 때문에 줄여쓰기
+	}
 	
 }

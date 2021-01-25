@@ -1,6 +1,7 @@
 package com.javaex.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -86,6 +87,20 @@ public class PhoneController {
 		// 포워드
 		return "modifyForm";
 	}
+	
+	//수정폼2 --> ModifyForm
+	@RequestMapping(value = "/modifyForm2", method = { RequestMethod.GET, RequestMethod.POST })
+	public String modifyForm2(Model model, @RequestParam("personId") int personId) {
+		System.out.println("modifyForm2");
+		System.out.println(personId);
+		
+		Map<String, Object> personMap = phoneDao.getPerson2(personId);
+		model.addAttribute("personMap", personMap);
+		
+		return "modifyForm2";
+	}
+	
+	
 
 	// 삭제 --> delete -->@RequestParam
 	@RequestMapping("/delete2")
@@ -126,18 +141,19 @@ public class PhoneController {
 
 		// Dao
 		// PhoneDao phoneDao = new PhoneDao(); AutoWired
-		phoneDao.personUpdate(personVo);
+		int count = phoneDao.personUpdate(personVo);
 
 		return "redirect:/phone/list";
 	}
 	
-	/*
+	
 	//수정 --> modify2 이전버전 --> @RequestParam
 	@RequestMapping(value = "/modify2", method = {RequestMethod.GET, RequestMethod.POST})
-	public String modify(@RequestParam("name") String name,
-						 @RequestParam("hp") String hp,
-						 @RequestParam("company") String company,
-						 @RequestParam("personId") int personId) {
+	public String modify2(@RequestParam("personId") int personId,
+						  @RequestParam("name") String name,
+						  @RequestParam("hp") String hp,
+						  @RequestParam("company") String company
+						  ) {
 							
 		System.out.println("modify2");
 		
@@ -151,7 +167,7 @@ public class PhoneController {
 		
 		return "redirect:/phone/list";
 	}
-	*/
+	
 	
 	
 
